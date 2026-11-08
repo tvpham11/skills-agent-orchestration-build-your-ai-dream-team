@@ -1,0 +1,46 @@
+{
+  "projects": [
+    {
+      "name": "Customer Portal Refresh",
+      "owner": "Maya Chen",
+      "status": "in-progress",
+      "recentActivity": "Completed usability testing and prioritized the account-settings fixes.",
+      "priority": "high"
+    },
+    {
+      "name": "Mobile Checkout Reliability",
+      "owner": "Jordan Ellis",
+      "status": "on-track",
+      "recentActivity": "Payment retry monitoring has remained below the 0.3% failure threshold this week.",
+      "priority": "critical"
+    },
+    {
+      "name": "Data Retention Program",
+      "owner": "Priya Nair",
+      "status": "planning",
+      "recentActivity": "Legal and engineering agreed on the first draft of the retention schedule.",
+      "priority": "medium"
+    },
+    {
+      "name": "Partner API Migration",
+      "owner": "Leo Martinez",
+      "status": "at-risk",
+      "recentActivity": "Two partners still need to confirm their cutover dates before the March release.",
+      "priority": "high"
+    },
+    {
+      "name": "Support Knowledge Base",
+      "owner": "Amara Okafor",
+      "status": "active",
+      "recentActivity": "Published twelve troubleshooting guides and connected feedback from the support queue.",
+      "priority": "low"
+    },
+    {
+      "name": "Quarterly Access Review",
+      "owner": "Noah Williams",
+      "status": "blocked",
+      "recentActivity": "Awaiting the final contractor roster from People Operations.",
+      "priority": "medium"
+    }
+  ]
+}

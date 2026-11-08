@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard" aria-labelledby="dashboard-title">
+      <header class="dashboard-header">
+        <div>
+          <p class="eyebrow">Portfolio overview</p>
+          <h1 id="dashboard-title">Project Pulse</h1>
+          <p class="dashboard-description">A clear view of current delivery work, ownership, and momentum.</p>
+        </div>
+        <p id="project-count" class="project-count" aria-live="polite">Loading projects</p>
+      </header>
+
+      <section aria-label="Projects">
+        <div id="dashboard-state" class="loading" role="status" aria-live="polite">
+          Loading project data…
+        </div>
+        <ul id="project-list" class="project-list" hidden aria-live="polite"></ul>
+      </section>
+    </main>
+
+    <script>
+      const state = document.getElementById("dashboard-state");
+      const projectList = document.getElementById("project-list");
+      const projectCount = document.getElementById("project-count");
+      const requiredFields = ["name", "owner", "status", "recentActivity", "priority"];
+
+      function formatLabel(value) {
+        return value.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+      }
+
+      function createProjectCard(project) {
+        const card = document.createElement("li");
+        card.className = "project-card";
+
+        const header = document.createElement("header");
+        const heading = document.createElement("h2");
+        heading.textContent = project.name;
+
+        const status = document.createElement("span");
+        status.className = `status status-${project.status}`;
+        status.dataset.status = project.status;
+        status.textContent = formatLabel(project.status);
+        header.append(heading, status);
+
+        const owner = document.createElement("p");
+        owner.className = "project-owner";
+        const ownerLabel = document.createElement("strong");
+        ownerLabel.textContent = "Owner: ";
+        owner.append(ownerLabel, project.owner);
+
+        const activity = document.createElement("p");
+        activity.className = "recent-activity";
+        activity.textContent = project.recentActivity;
+
+        const footer = document.createElement("footer");
+        const priority = document.createElement("span");
+        priority.className = `priority priority-${project.priority}`;
+        priority.dataset.priority = project.priority;
+        priority.textContent = `${formatLabel(project.priority)} priority`;
+        footer.append(priority);
+
+        card.append(header, owner, activity, footer);
+        return card;
+      }
+
+      function showState(message, type) {
+        projectList.hidden = true;
+        state.hidden = false;
+        state.textContent = message;
+        state.className = type;
+        state.setAttribute("role", type === "error-state" ? "alert" : "status");
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`The server returned ${response.status}.`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("The project data is not in the expected format.");
+          }
+
+          const projects = data.projects.filter((project) =>
+            project &&
+            requiredFields.every((field) => typeof project[field] === "string" && project[field].trim())
+          );
+
+          if (projects.length === 0) {
+            projectCount.textContent = "No projects";
+            showState("No projects are available right now. Please check back later.", "empty-state");
+            return;
+          }
+
+          projectList.replaceChildren(...projects.map(createProjectCard));
+          state.hidden = true;
+          projectList.hidden = false;
+          projectCount.textContent = `${projects.length} ${projects.length === 1 ? "project" : "projects"}`;
+        } catch (error) {
+          projectCount.textContent = "Projects unavailable";
+          showState(`We couldn’t load the project dashboard. ${error.message} Please try again later.`, "error-state");
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
